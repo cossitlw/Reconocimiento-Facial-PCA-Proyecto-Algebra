@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>✦ celebrity_match.exe ✦</title>
-    <!-- Fuentes estilo 200s Aesthetic / Chunky Organic -->
     <link href="https://fonts.googleapis.com/css2?family=Syne+Tactile&family=VT323&family=MS+PGothic&display=swap" rel="stylesheet">
-    <!-- Chart.js para el diagrama de parecido -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; }
         
         body {
             background-color: #c0c0c0;
-            /* Fondo monocromático con trama punteada Y2K */
             background-image: radial-gradient(#666666 1px, transparent 0);
             background-size: 6px 6px;
             font-family: 'VT323', 'MS PGothic', monospace;
@@ -22,18 +19,16 @@
             padding: 15px;
         }
 
-        /* Contenedor principal de 3 columnas tal cual la maqueta */
         .grid-maqueta {
             max-width: 1100px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 200px 1fr 280px;
-            gap: 12px;
+            grid-template-columns: 240px 1fr;
+            gap: 15px;
             position: relative;
-            z-index: 1;
+            z-index: 10;
         }
 
-        /* Banner Superior Monocromático con Fuente Botch/Bubble */
         .header-y2k {
             grid-column: 1 / -1;
             background: linear-gradient(90deg, #000000, #333333, #000000);
@@ -41,18 +36,14 @@
             border: 2px outset #ffffff;
             padding: 12px;
             text-align: center;
-            
             font-family: 'Syne Tactile', cursive, sans-serif;
-            font-size: 34px;
+            font-size: 32px;
             font-weight: bold;
             letter-spacing: 3px;
             text-transform: lowercase;
-            
             box-shadow: 2px 2px 0px #000000;
-            text-shadow: 2px 2px 0px #555555;
         }
 
-        /* Ventanas en Blanco, Negro y Gris Estilo Windows 2000 */
         .window-box {
             background: #c0c0c0;
             border: 2px solid;
@@ -65,20 +56,30 @@
         .win-header {
             background: linear-gradient(90deg, #000000, #444444);
             color: #ffffff;
-            padding: 2px 6px;
+            padding: 3px 6px;
             font-size: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
+        .section-title {
+            background: #000080;
+            color: #ffffff;
+            padding: 3px 6px;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            border: 1px inset #ffffff;
+            text-transform: uppercase;
+        }
+
         .win-content {
-            padding: 8px;
+            padding: 10px;
             background: #d4d0c8;
             color: #000000;
         }
 
-        /* Botones laterales B&N */
         .btn-side {
             display: block;
             width: 100%;
@@ -86,8 +87,8 @@
             border: 2px solid;
             border-color: #ffffff #808080 #808080 #ffffff;
             color: #000000;
-            padding: 4px;
-            margin-bottom: 4px;
+            padding: 6px;
+            margin-bottom: 5px;
             font-family: 'VT323', monospace;
             font-size: 18px;
             cursor: pointer;
@@ -121,79 +122,79 @@
             color: #000000;
             border: 2px solid;
             border-color: #ffffff #808080 #808080 #ffffff;
-            padding: 6px;
+            padding: 8px;
             width: 100%;
-            margin-top: 6px;
+            margin-top: 8px;
             cursor: pointer;
             font-weight: bold;
         }
 
-        .btn-action:active {
-            border-color: #808080 #ffffff #ffffff #808080;
-        }
-
-        /* Consola de Matriz PCA Monocromática */
         .matrix-display {
             background: #000000;
-            color: #ffffff;
+            color: #00ff00;
             font-family: monospace;
-            font-size: 12px;
-            padding: 6px;
+            font-size: 13px;
+            padding: 8px;
             border: 2px inset #808080;
-            max-height: 140px;
+            max-height: 180px;
             overflow-y: auto;
             word-break: break-all;
         }
 
-        /* Reproductor Winamp / WebDeck B&N */
-        .webdeck-player {
-            background: #111111;
+        details.window-box summary {
+            background: linear-gradient(90deg, #000000, #444444);
             color: #ffffff;
-            border: 2px outset #808080;
-            padding: 6px;
-            font-size: 14px;
+            padding: 6px 10px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            list-style: none;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            margin-top: 8px;
+        }
+        details.window-box summary::-webkit-details-marker { display: none; }
+        details.window-box summary::after { content: "▼ [VER VISTAS Y ANÁLISIS]"; font-size: 14px; }
+        details.window-box[open] summary::after { content: "▲ [OCULTAR]"; }
+
+        .thumbnail-grid {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            max-height: 140px;
+            overflow-y: auto;
+            background: #000;
+            padding: 6px;
+            border: 2px inset #808080;
         }
     </style>
 </head>
 <body>
 
-<!-- IMÁGENES FLOTANTES DE FONDO B&N -->
-<img src="{{ url_for('static', filename='gato.png') }}" style="position: fixed; left: 10px; top: 110px; width: 180px; z-index: 0; pointer-events: none;">
-<img src="{{ url_for('static', filename='conejo.png') }}" style="position: fixed; right: 10px; top: 130px; width: 170px; z-index: 0; pointer-events: none;">
-<img src="{{ url_for('static', filename='gato2.png') }}" style="position: fixed; left: 15px; bottom: 15px; width: 160px; z-index: 0; pointer-events: none;">
-<img src="{{ url_for('static', filename='flor.png') }}" style="position: fixed; right: 15px; bottom: 15px; width: 150px; z-index: 0; pointer-events: none;">
+<img src="{{ url_for('static', filename='gato.png') }}" style="position: fixed; left: 15px; top: 110px; width: 170px; z-index: 1; pointer-events: none;">
+<img src="{{ url_for('static', filename='conejo.png') }}" style="position: fixed; right: 15px; top: 120px; width: 160px; z-index: 1; pointer-events: none;">
+<img src="{{ url_for('static', filename='gato2.png') }}" style="position: fixed; left: 15px; bottom: 15px; width: 160px; z-index: 1; pointer-events: none;">
+<img src="{{ url_for('static', filename='flor.png') }}" style="position: fixed; right: 15px; bottom: 15px; width: 150px; z-index: 1; pointer-events: none;">
 
-<!-- PANTALLA RETRO DE CARGA -->
 <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
     <div class="window-box" style="width: 320px; background: #c0c0c0; text-align: center;">
-        <div class="win-header">
-            <span>processing_pca.exe</span>
-            <span>[x]</span>
-        </div>
+        <div class="win-header"><span>processing_pca.exe</span><span>[x]</span></div>
         <div class="win-content" style="padding: 15px;">
-            <p style="margin: 0 0 10px 0; font-weight: bold;">Procesando vector en d=4096...<br>Calculando eigenvalores λ_i...</p>
-            
-            <div style="border: 2px inset #808080; background: #ffffff; height: 22px; padding: 2px; position: relative; overflow: hidden;">
+            <p style="margin: 0 0 10px 0; font-weight: bold;">Calculando eigenvectores y proyecciones...</p>
+            <div style="border: 2px inset #808080; background: #ffffff; height: 22px; padding: 2px;">
                 <div id="progressBar" style="background: #000000; width: 0%; height: 100%; transition: width 0.1s linear;"></div>
             </div>
-            
-            <p style="font-size: 14px; margin-top: 8px; color: #333333;">Proyectando rostro al subespacio PCA...</p>
         </div>
     </div>
 </div>
 
 <div class="grid-maqueta">
     
-    <!-- BANNER SUPERIOR CON FUENTE BOTCH Y B&N -->
     <div class="header-y2k">
         celebrity_match.exe
     </div>
 
-    <!-- COLUMNA 1: MENÚ LATERAL -->
+    <!-- COLUMNA IZQUIERDA -->
     <div>
         <div class="window-box">
             <div class="win-header"><span>navigation</span></div>
@@ -201,94 +202,153 @@
                 <button class="btn-side" onclick="location.reload()">★ home</button>
                 <button class="btn-side" onclick="scrollearA('pca_section')">★ pca_matrix</button>
                 <button class="btn-side" onclick="alert('Dataset: Celebridades registradas en el modelo PCA')">★ database</button>
-                <button class="btn-side" onclick="alert('✦ PROYECTO DE ÁLGEBRA LINEAL AVANZADA ✦ Daniela Cosset Moyeda Gaspar & Melanie Victoria Robles Osorio')">★ credits</button>
+                <button class="btn-side" onclick="alert('✦ PROYECTO DE ÁLGEBRA LINEAL AVANZADA ✦')">★ credits</button>
             </div>
         </div>
 
         <div class="window-box">
-            <div class="win-header"><span>system_status</span></div>
-            <div class="win-content" style="font-size: 16px;">
-                STATUS: READY<br>
-                MODEL: PCA REDUCIDO<br>
-                MATRIX L: n x n
-            </div>
-        </div>
-    </div>
-
-    <!-- COLUMNA 2 (CENTRAL): FOTO DE LA PERSONA Y TITULO PROYECTO -->
-    <div>
-        <div class="window-box">
-            <div class="win-header">
-                <span>foto_de_la_persona.bmp</span>
-                <span>[X]</span>
-            </div>
-            <div class="win-content">
-                <div class="screen-frame" style="height: 260px;">
-                    <video id="video" autoplay playsinline></video>
-                    <img id="img_preview" style="display: none; max-height: 100%;">
-                </div>
-
-                <div style="margin-top: 8px;">
-                    <label>Componentes PCA (k): <b id="val_k">5</b></label>
-                    <input type="range" id="slider_k" min="1" max="15" value="5" style="width: 100%;" oninput="document.getElementById('val_k').innerText = this.value">
-                </div>
-
-                <button class="btn-action" onclick="capturarYCargar('camara')">[ SCANEAR ROSTRO (WEBCAM) ]</button>
-                
-                <input type="file" id="file_input" accept="image/*" style="display: none;" onchange="cargarArchivoLocal(event)">
-                <button class="btn-action" style="background: #e0e0e0;" onclick="document.getElementById('file_input').click()">📁 EXAMINAR ARCHIVO...</button>
-            </div>
-        </div>
-
-        <div class="window-box">
-            <div class="win-header"><span>about_project.txt</span><span>[X]</span></div>
-            <div class="win-content" style="text-align: center;">
-                <h3 style="margin: 4px 0; color: #000000;">PROYECTO DE ÁLGEBRA LINEAL AVANZADA</h3>
-                <p style="margin: 2px 0; font-size: 16px;">Reconocimiento Facial mediante Análisis de Componentes Principales</p>
-                
-                <!-- Webdeck / Player Retro con Audio -->
-                <div class="webdeck-player">
-                    <audio id="bgMusic" loop src="{{ url_for('static', filename='audio/cancion.mp3.mp3') }}"></audio>
-                    <button onclick="toggleMusica()" id="btnPlay" style="background:#c0c0c0; color:#000; border:2px outset #fff; font-family:monospace; cursor:pointer; font-weight:bold;">▶ PLAY</button>
-                    <marquee scrollamount="3" style="color: #ffffff; font-family: monospace;">
-                        ♪ Playing: 200s Hip-Hop Beat - PCA Linear Algebra Track ♪
-                    </marquee>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- COLUMNA 3 (DERECHA): CELEBRIDAD (A COLOR), DIAGRAMA DE PARECIDO (A COLOR) Y MATRIZ PCA -->
-    <div>
-        <div class="window-box">
-            <div class="win-header"><span>Celebridad</span><span>[X]</span></div>
+            <div class="win-header"><span>match_resultado.sys</span><span>[X]</span></div>
             <div class="win-content" style="text-align: center;">
                 <div class="screen-frame" style="height: 180px;">
                     <img id="img_celeb" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><rect width='100%' height='100%' fill='%23222'/></svg>">
                 </div>
-                <div id="nombre_celeb" style="margin-top: 6px; font-weight: bold; color: #000000;">
+                <div id="nombre_celeb" style="margin-top: 6px; font-weight: bold; font-size: 18px;">
                     ESPERANDO CAPTURA...
                 </div>
             </div>
         </div>
 
-        <div class="window-box">
-            <div class="win-header"><span>diagrama_de_parecido.sys</span><span>[X]</span></div>
-            <div class="win-content">
-                <!-- Gráfica de radar en color -->
-                <canvas id="radarChart" style="max-height: 180px;"></canvas>
-            </div>
-        </div>
-
+        <!-- SECCIÓN RESTAURADA: MATRIZ DE EIGENVALORES (PCA_MATRIX) -->
         <div class="window-box" id="pca_section">
             <div class="win-header"><span>pca_matrix</span><span>[X]</span></div>
             <div class="win-content">
-                <p style="margin: 0 0 4px 0; font-size: 15px;">Matriz de Eigenvalores λ (Varianza):</p>
-                <div class="matrix-display" id="matrix_box">
-                    [ Clic en 'Scanear' para calcular la matriz C mediante L = (1/(n-1)) * Xc * Xc^T ]
+                <div class="section-title">Matriz de Eigenvalores λ</div>
+                <div class="matrix-display" id="matrix_box_lambdas">
+                    [ Esperando escaneo para calcular eigenvalores λ ]
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- COLUMNA DERECHA -->
+    <div>
+        <div class="window-box">
+            <div class="win-header"><span>foto_de_la_persona.bmp</span><span>[X]</span></div>
+            <div class="win-content">
+                <div class="screen-frame" style="height: 250px;">
+                    <video id="video" autoplay playsinline></video>
+                    <img id="img_preview" style="display: none; max-height: 100%;">
+                </div>
+
+                <div style="margin-top: 8px;">
+                    <label style="font-size: 17px;">Componentes PCA (k): <b id="val_k">15</b></label>
+                    <input type="range" id="slider_k" min="1" max="50" value="15" style="width: 100%;" oninput="document.getElementById('val_k').innerText = this.value">
+                </div>
+
+                <div style="margin-top: 8px; background: #c0c0c0; padding: 4px; border: 1px inset #808080; font-size: 16px;">
+                    <label style="cursor: pointer; font-weight: bold;">
+                        <input type="checkbox" id="check_mahalanobis" checked> ★ Usar Distancia de Mahalanobis
+                    </label>
+                </div>
+
+                <button class="btn-action" onclick="capturarYCargar('camara')">[ SCANEAR ROSTRO (WEBCAM) ]</button>
+                <input type="file" id="file_input" accept="image/*" style="display: none;" onchange="cargarArchivoLocal(event)">
+                <button class="btn-action" style="background: #e0e0e0;" onclick="document.getElementById('file_input').click()">📁 EXAMINAR ARCHIVO...</button>
+            </div>
+        </div>
+
+        <details class="window-box">
+            <summary>✦ Vistas y Aspectos Matemáticos</summary>
+            <div class="win-content" style="padding: 10px;">
+                
+                <div class="window-box">
+                    <div class="win-header"><span>1. dataset.sys</span></div>
+                    <div class="win-content">
+                        <div class="section-title">1. Datos (Entrenamiento)</div>
+                        <div class="thumbnail-grid" id="dataset_thumbnails">
+                            <span style="color:#fff; font-size:14px;">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="window-box">
+                    <div class="win-header"><span>2. media_centrado.sys</span></div>
+                    <div class="win-content">
+                        <div class="section-title">2. Media y Centrado (Xc)</div>
+                        <div style="text-align: center; margin-bottom: 6px;">
+                            <span style="font-size:16px; font-weight:bold;">Imagen Promedio (μ):</span>
+                            <div class="screen-frame" style="height: 90px; margin-top: 4px;">
+                                <img id="img_media" style="max-height: 100%;">
+                            </div>
+                        </div>
+                        <div style="font-size: 14px;">Xc = X - 1μ^T. Rostros centrados procesados.</div>
+                    </div>
+                </div>
+
+                <div class="window-box">
+                    <div class="win-header"><span>3. covarianza.sys</span></div>
+                    <div class="win-content">
+                        <div class="section-title">3. Covarianza (C y L)</div>
+                        <div style="font-size: 14px; margin-bottom: 4px;" id="info_covarianza">C: 4096×4096 | L: n×n</div>
+                        <div class="screen-frame" style="height: 100px;">
+                            <canvas id="heatmapCanvas" style="width: 100%; height: 100%; image-rendering: pixelated;"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="window-box">
+                    <div class="win-header"><span>4. eigenvalores.sys</span></div>
+                    <div class="win-content">
+                        <div class="section-title">4. Eigenvalores (λ) y Varianza</div>
+                        <canvas id="varianceChart" style="max-height: 150px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="window-box">
+                    <div class="win-header"><span>5. eigen_imagenes.sys</span></div>
+                    <div class="win-content">
+                        <div class="section-title">5. Componentes (Eigenfaces)</div>
+                        <div class="thumbnail-grid" id="eigenfaces_grid">
+                            <span style="color:#fff; font-size:14px;">Calculando...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="window-box">
+                    <div class="win-header"><span>6. reconstruccion.sys</span></div>
+                    <div class="win-content">
+                        <div class="section-title">6. Reconstrucción (x̂)</div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div class="screen-frame" style="width: 90px; height: 90px; flex-shrink: 0;">
+                                <img id="img_reconstruida" style="max-height: 100%;">
+                            </div>
+                            <div style="font-size: 15px;" id="info_reconstruccion">
+                                x̂ = μ + W_k y<br>Error e(x): --
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="window-box">
+                    <div class="win-header"><span>7. proyeccion.sys</span></div>
+                    <div class="win-content">
+                        <div class="section-title">7. Proyección (Espacio PCA)</div>
+                        <canvas id="radarChart" style="max-height: 160px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="window-box">
+                    <div class="win-header"><span>8. prueba_decision.sys</span></div>
+                    <div class="win-content">
+                        <div class="section-title">8. Prueba y Umbrales (τ_rec, τ_id)</div>
+                        <div class="matrix-display" id="matrix_box_prueba">
+                            [ Esperando escaneo para métricas de prueba ]
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </details>
     </div>
 
 </div>
@@ -298,46 +358,99 @@
     const imgPreview = document.getElementById('img_preview');
     const sliderK = document.getElementById('slider_k');
     let imagenDataBase64 = null;
-    let radarChart;
+    let radarChart, varianceChart;
 
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => { video.srcObject = stream; })
-        .catch(err => { console.warn("Camara no disponible:", err); });
+        .catch(err => { console.warn("Cámara no disponible:", err); });
 
-    function initRadar() {
-        const ctx = document.getElementById('radarChart').getContext('2d');
-        radarChart = new Chart(ctx, {
+    function initCharts() {
+        const ctxRadar = document.getElementById('radarChart').getContext('2d');
+        radarChart = new Chart(ctxRadar, {
             type: 'radar',
             data: {
-                labels: ['Simetría', 'Ojos/Mirada', 'Estructura', 'Proporción', 'Brillo'],
+                labels: ['Simetría', 'Ojos', 'Estructura', 'Proporción', 'Brillo'],
                 datasets: [{
                     label: '% Parecido',
-                    data: [20, 20, 20, 20, 20],
+                    data: [0, 0, 0, 0, 0],
                     backgroundColor: 'rgba(16, 132, 208, 0.4)',
                     borderColor: '#1084d0',
                     pointBackgroundColor: '#ff0055'
                 }]
             },
-            options: {
-                scales: { r: { min: 0, max: 100, ticks: { display: false } } },
-                plugins: { legend: { display: false } }
-            }
+            options: { scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+        });
+
+        const ctxVar = document.getElementById('varianceChart').getContext('2d');
+        varianceChart = new Chart(ctxVar, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Varianza Acumulada',
+                    data: [],
+                    borderColor: '#000080',
+                    backgroundColor: 'rgba(0,0,128,0.2)',
+                    fill: true
+                }]
+            },
+            options: { scales: { y: { min: 0, max: 1 } }, plugins: { legend: { display: false } } }
         });
     }
-    initRadar();
+    initCharts();
 
-    function toggleMusica() {
-        const audio = document.getElementById('bgMusic');
-        const btn = document.getElementById('btnPlay');
+    function dibujarMapaCalorReal(matrizL) {
+        const canvas = document.getElementById('heatmapCanvas');
+        if (!canvas || !matrizL || matrizL.length === 0) return;
+        const ctx = canvas.getContext('2d');
+        const rows = matrizL.length;
+        const cols = matrizL[0].length;
+        canvas.width = cols;
+        canvas.height = rows;
+        const imgData = ctx.createImageData(cols, rows);
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const idx = (r * cols + c) * 4;
+                const val = matrizL[r][c];
+                imgData.data[idx] = val;
+                imgData.data[idx + 1] = 40;
+                imgData.data[idx + 2] = 255 - val;
+                imgData.data[idx + 3] = 255;
+            }
+        }
+        ctx.putImageData(imgData, 0, 0);
+    }
 
-        if (audio.paused) {
-            audio.play();
-            btn.innerText = "⏸ PAUSE";
-        } else {
-            audio.pause();
-            btn.innerText = "▶ PLAY";
+    async function cargarInfoPCA() {
+        const response = await fetch('/api/pca_info');
+        const res = await response.json();
+        if (!res.error) {
+            const dsGrid = document.getElementById('dataset_thumbnails');
+            dsGrid.innerHTML = '';
+            res.datos_entrenamiento.forEach(item => {
+                dsGrid.innerHTML += `<div style="text-align:center;"><img src="${item.imagen}" style="width:40px; height:40px; border:1px solid #fff;"><br><span style="font-size:10px; color:#fff;">${item.etiqueta}</span></div>`;
+            });
+
+            document.getElementById('img_media').src = res.imagen_promedio;
+            document.getElementById('info_covarianza').innerHTML = `C: ${res.dimension_original}×${res.dimension_original} | L: ${res.n_imagenes}×${res.n_imagenes}`;
+
+            if (res.matriz_L) {
+                dibujarMapaCalorReal(res.matriz_L);
+            }
+
+            const varAcum = res.varianza_acumulada;
+            varianceChart.data.labels = varAcum.map((_, i) => `λ_${i+1}`);
+            varianceChart.data.datasets[0].data = varAcum;
+            varianceChart.update();
+
+            const eigenGrid = document.getElementById('eigenfaces_grid');
+            eigenGrid.innerHTML = '';
+            res.eigenfaces.forEach((ef, idx) => {
+                eigenGrid.innerHTML += `<div style="text-align:center;"><img src="${ef}" style="width:40px; height:40px; border:1px solid #fff;"><br><span style="font-size:10px; color:#fff;">λ_${idx+1}</span></div>`;
+            });
         }
     }
+    cargarInfoPCA();
 
     function cargarArchivoLocal(event) {
         const file = event.target.files[0];
@@ -345,11 +458,9 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 imagenDataBase64 = e.target.result;
-                
                 video.style.display = 'none';
                 imgPreview.src = imagenDataBase64;
                 imgPreview.style.display = 'block';
-
                 procesarIdentificacion(imagenDataBase64);
             };
             reader.readAsDataURL(file);
@@ -360,13 +471,11 @@
         if (origen === 'camara') {
             video.style.display = 'block';
             imgPreview.style.display = 'none';
-
             const canvas = document.createElement('canvas');
             canvas.width = 240; 
             canvas.height = 240;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
             imagenDataBase64 = canvas.toDataURL('image/png');
             procesarIdentificacion(imagenDataBase64);
         }
@@ -375,77 +484,71 @@
     async function procesarIdentificacion(dataURL) {
         const overlay = document.getElementById('loadingOverlay');
         const pBar = document.getElementById('progressBar');
-        
         overlay.style.display = 'flex';
-        pBar.style.width = '10%';
-
-        let progress = 10;
-        const timer = setInterval(() => {
-            if (progress < 85) {
-                progress += Math.floor(Math.random() * 15) + 5;
-                pBar.style.width = progress + '%';
-            }
-        }, 120);
+        pBar.style.width = '30%';
 
         try {
             const kVal = sliderK.value;
+            const usarMah = document.getElementById('check_mahalanobis').checked;
 
             const response = await fetch('/identificar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ imagen: dataURL, k: kVal })
+                body: JSON.stringify({ imagen: dataURL, k: kVal, mahalanobis: usarMah })
             });
 
             const res = await response.json();
-
-            clearInterval(timer);
             pBar.style.width = '100%';
             
             setTimeout(() => {
                 overlay.style.display = 'none';
-
                 if (res.error) {
                     alert("Error: " + res.error);
                 } else {
+                    // Mostrar los eigenvalores calculados en el cuadro de la izquierda
+                    if (res.eigenvalores) {
+                        let lambdaText = "L_matrix (Eigenvalores λ):\n[\n";
+                        res.eigenvalores.forEach((val, idx) => {
+                            lambdaText += `  λ_${idx+1} = ${val.toFixed(2)}\n`;
+                        });
+                        lambdaText += `]\nDim C: ${res.dimension_original}x${res.dimension_original}\nDim L: ${res.n_imagenes}x${res.n_imagenes}`;
+                        document.getElementById('matrix_box_lambdas').innerText = lambdaText;
+                    }
+
                     if (res.foto_celebridad) {
                         document.getElementById('img_celeb').src = res.foto_celebridad;
                         document.getElementById('nombre_celeb').innerText = "MATCH: " + res.nombre_celebridad.toUpperCase();
                     }
 
-                    const d = res.distancia || 5000;
-                    const sim = Math.max(10, Math.min(98, 100 - (d / 100)));
-                    radarChart.data.datasets[0].data = [
-                        sim, 
-                        Math.max(15, sim - 5), 
-                        Math.min(95, sim + 8), 
-                        Math.max(20, sim - 3), 
-                        sim
-                    ];
+                    if (res.imagen_reconstruida) {
+                        document.getElementById('img_reconstruida').src = res.imagen_reconstruida;
+                        document.getElementById('info_reconstruccion').innerHTML = `x̂ = μ + W_k y<br>Error e(x): <b>${res.error_reconstruccion.toFixed(2)}</b>`;
+                    }
+
+                    const d = res.distancia || 2000;
+                    const sim = Math.max(10, Math.min(98, 100 - (d / 50)));
+                    radarChart.data.datasets[0].data = [sim, Math.max(15, sim - 5), Math.min(95, sim + 8), Math.max(20, sim - 3), sim];
                     radarChart.update();
 
-                    cargarMatrizPCA();
+                    let reportePrueba = `--- PRUEBA VIVO ---\n`;
+                    reportePrueba += `Métrica: ${res.metrica_usada}\n`;
+                    reportePrueba += `Estado: ${res.estado}\n`;
+                    reportePrueba += `Mensaje: ${res.mensaje}\n`;
+                    reportePrueba += `Error e(x): ${res.error_reconstruccion ? res.error_reconstruccion.toFixed(2) : 'N/A'}\n`;
+                    reportePrueba += `Coordenadas y: [${res.coordenadas ? res.coordenadas.map(v => v.toFixed(1)).join(', ') : ''}]\n\n`;
+                    reportePrueba += `Distancias:\n`;
+                    if (res.distancias) {
+                        for (const [imgN, dist] of Object.entries(res.distancias)) {
+                            reportePrueba += ` • ${imgN}: ${dist.toFixed(2)}\n`;
+                        }
+                    }
+                    document.getElementById('matrix_box_prueba').innerText = reportePrueba;
                 }
             }, 300);
 
         } catch (err) {
-            clearInterval(timer);
             overlay.style.display = 'none';
             alert("Ocurrió un error al procesar la imagen.");
-        }
-    }
-
-    async function cargarMatrizPCA() {
-        const response = await fetch('/api/pca_info');
-        const res = await response.json();
-
-        if (!res.error) {
-            const matrixBox = document.getElementById('matrix_box');
-            let lambdaText = "L_matrix (Eigenvalores):\n[\n";
-            res.eigenvalores.forEach((val, idx) => {
-                lambdaText += `  λ_${idx+1} = ${val.toFixed(4)}\n`;
-            });
-            lambdaText += "]\n\nDim C: 4096 x 4096\nDim L: " + res.n_imagenes + " x " + res.n_imagenes;
-            matrixBox.innerText = lambdaText;
         }
     }
 

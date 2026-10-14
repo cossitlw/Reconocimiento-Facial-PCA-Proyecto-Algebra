@@ -13,13 +13,11 @@ class PCAFacial:
         self.proyecciones_entrenamiento = None
 
     def entrenar(self, imagenes_vectores, etiquetas):
-        """
-        Ejecuta el proceso completo de PCA con el truco de la matriz pequeña (n x n).
-        """
+        """Ejecuta el PCA completo utilizando el truco de la matriz pequeña L (n x n)."""
         self.n = len(imagenes_vectores)
         if self.n < 2:
             raise ValueError("Se requieren al menos 2 imágenes para entrenar el modelo.")
-
+        
         self.etiquetas = etiquetas
         X = np.stack(imagenes_vectores).astype(float)
         
@@ -29,33 +27,31 @@ class PCAFacial:
         # 2. Centrado de datos
         self.Xc = X - self.mu
         
-        # 3. Matriz reducida L (n x n)
+        # 3. Truco de la matriz reducida L (n x n)
         L = (self.Xc @ self.Xc.T) / (self.n - 1)
         
-        # 4. Diagonalización
+        # 4. Diagonalización con eigh (matriz simétrica)
         lam, V = np.linalg.eigh(L)
         
-        # Ordenamiento descendente
+        # Ordenamiento descendente por eigenvalor
         orden = np.argsort(lam)[::-1]
         self.lam = lam[orden]
         V = V[:, orden]
         
-        # Filtrado de eigenvalores nulos/despreciables
+        # Filtrado de eigenvalores numéricamente nulos o despreciables
         utiles = self.lam > (1e-10 * self.lam[0] if self.lam[0] > 0 else 1e-10)
         self.lam = self.lam[utiles]
         V = V[:, utiles]
         
-        # 5. Obtención de Eigenvectores del espacio original (Eigenfaces)
+        # 5. Obtención de Eigenfaces del espacio original (d dimensiones)
         self.W = self.Xc.T @ V
         self.W /= np.linalg.norm(self.W, axis=0)
         
-        # Guardar proyecciones del conjunto de entrenamiento con todas las componentes útiles
+        # Proyecciones del conjunto de entrenamiento
         self.proyecciones_entrenamiento = self.Xc @ self.W
 
     def proyectar(self, x, k):
-        """
-        Proyecta un vector x a k componentes y calcula su reconstrucción y error.
-        """
+        """Proyecta un vector x a k componentes, calcula la reconstrucción y el error e(x)."""
         k = min(k, len(self.lam))
         x_centrado = x - self.mu
         y = self.W[:, :k].T @ x_centrado
@@ -64,6 +60,7 @@ class PCAFacial:
         return y, x_rec, error_rec
 
     def varianza_explicada_acumulada(self):
+        """Calcula la proporción de varianza explicada acumulada para k componentes."""
         varianza_total = np.sum(self.lam)
         if varianza_total == 0:
             return []
